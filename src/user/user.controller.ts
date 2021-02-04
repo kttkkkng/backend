@@ -9,21 +9,20 @@ export class UserController {
 
     @UseGuards(AuthGuard)
     @Get(':id')
-    findByID(@Param('id', new ParseIntPipe()) id: number): Promise<Omit<User, 'password'>>{
+    findByID(@Param('id', new ParseIntPipe()) id: number): Promise<User>{
         return this.userService.findByID(id);
     }
 
     @Post()
-    create(@Body() dto: Omit<User, 'id'>): Promise<Omit<User, 'password'>>{
+    create(@Body() dto: Omit<User, 'id'>): Promise<User>{
         return this.userService.create(dto);
     }
 
-    @UseGuards(AuthGuard)
-    @Patch(':id')
+    @Patch(':username')
     update(
-        @Param('id', new ParseIntPipe()) id: number,
+        @Param('username') username: string,
         @Body() dto: Partial<Omit<User, 'id'>>,
     ): Promise<Omit<User, 'password'>>{
-        return this.userService.update(id, dto);
+        return this.userService.update(username, dto);
     }
 }

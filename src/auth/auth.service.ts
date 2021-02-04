@@ -24,6 +24,7 @@ export class AuthService {
     }
 
     verifyToken(token: string): {uid: number}{
+        console.log('hello');
         return this.jwtService.verify<{uid: number}>(token);
     }
 }

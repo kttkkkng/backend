@@ -10,7 +10,7 @@ export class UserService {
         @InjectRepository(User) private readonly repo: Repository<User>,
     ) {}
 
-    findByID(id: number): Promise<Omit<User, 'password'>> {
+    findByID(id: number): Promise<User> {
         return this.repo.findOne(id);
     }
 
@@ -18,8 +18,8 @@ export class UserService {
         return this.repo.findOne({username: username});
     }
 
-    async create(dto: Omit<User, 'id'>): Promise<Omit<User, 'password'>> {
-        if(this.repo.findOne({username: dto.username})){
+    async create(dto: Omit<User, 'id'>): Promise<User> {
+        if(await this.repo.findOne({username: dto.username}) !== undefined){
             throw new BadRequestException('username existed');
         }
         const password = await hash(dto.password, 10);
@@ -27,8 +27,8 @@ export class UserService {
         return this.repo.save(user);
     }
 
-    async update(id: number, dto: Partial<Omit<User, 'id'>>): Promise<Omit<User, 'password'>> {
-        const user = {... (await this.findByID(id)), ... dto};
+    async update(username: string, dto: Partial<Omit<User, 'id'>>): Promise<User> {
+        const user = {... (await this.findByUsername(username)), ... dto};
         if(!user){
             throw new BadRequestException('ID not existed');
         }
